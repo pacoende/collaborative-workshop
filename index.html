@@ -1,4 +1,128 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Collaborative Workshop</title><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head>
-<body><header><h1>Collaborative Workshop</h1><p>Atelier de réflexion — sauvegarde sur cet appareil, sans synchronisation entre participants.</p><nav><button id="add">+ Ajouter une case</button><button id="minus" aria-label="Dézoomer">−</button><button id="plus" aria-label="Zoomer">+</button><button id="fit">Recentrer</button><button id="export">Exporter le tableau</button><button id="importButton">Importer un tableau</button><input id="import" type="file" accept=".json" hidden></nav><p id="status" role="status">Déplace les cases avec ☰, relie-les avec leur bouton. Clique un trait pour le supprimer.</p></header>
-<main><div id="view"><div id="world"><svg id="lines" aria-label="Liens entre les cases"></svg><div id="nodes"></div></div></div><aside><section><h2>Échanges locaux</h2><div id="messages"></div><form id="chat"><input id="message" aria-label="Message" placeholder="Message…" required><button>Ajouter</button></form></section><section><h2>Documents</h2><label id="drop">Glisser-déposer ou choisir des fichiers<input id="upload" type="file" multiple></label><div id="files"></div><p>Documents conservés dans ce navigateur. Télécharge-les séparément pour les migrer.</p></section></aside></main></body></html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Collaborative Workshop</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="supabase-client.js" defer></script>
+  <script src="auth.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+
+<body>
+
+  <section id="authScreen">
+    <h1>Collaborative Workshop</h1>
+    <p>Connexion à l’espace de travail partagé.</p>
+
+    <form id="loginForm">
+      <label>
+        Email
+        <input
+          id="loginEmail"
+          type="email"
+          autocomplete="email"
+          required
+        >
+      </label>
+
+      <label>
+        Mot de passe
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          required
+        >
+      </label>
+
+      <button type="submit">Se connecter</button>
+    </form>
+
+    <p id="authStatus" role="status"></p>
+  </section>
+
+  <div id="appShell" hidden>
+
+    <header>
+      <h1>Collaborative Workshop</h1>
+
+      <p>
+        Atelier de réflexion partagé.
+      </p>
+
+      <div id="account">
+        <span id="currentUser"></span>
+        <button id="logout">Déconnexion</button>
+      </div>
+
+      <nav>
+        <button id="add">+ Ajouter une case</button>
+        <button id="minus" aria-label="Dézoomer">−</button>
+        <button id="plus" aria-label="Zoomer">+</button>
+        <button id="fit">Recentrer</button>
+        <button id="export">Exporter le tableau</button>
+        <button id="importButton">Importer un tableau</button>
+        <input id="import" type="file" accept=".json" hidden>
+      </nav>
+
+      <p id="status" role="status">
+        Déplace les cases avec ☰, relie-les avec leur bouton.
+        Clique un trait pour le supprimer.
+      </p>
+    </header>
+
+    <main>
+
+      <div id="view">
+        <div id="world">
+          <svg id="lines" aria-label="Liens entre les cases"></svg>
+          <div id="nodes"></div>
+        </div>
+      </div>
+
+      <aside>
+
+        <section>
+          <h2>Échanges locaux</h2>
+
+          <div id="messages"></div>
+
+          <form id="chat">
+            <input
+              id="message"
+              aria-label="Message"
+              placeholder="Message…"
+              required
+            >
+            <button>Ajouter</button>
+          </form>
+        </section>
+
+        <section>
+          <h2>Documents</h2>
+
+          <label id="drop">
+            Glisser-déposer ou choisir des fichiers
+            <input id="upload" type="file" multiple>
+          </label>
+
+          <div id="files"></div>
+
+          <p>
+            Documents encore conservés localement dans ce navigateur.
+          </p>
+        </section>
+
+      </aside>
+
+    </main>
+
+  </div>
+
+</body>
+</html>
