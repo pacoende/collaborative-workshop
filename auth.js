@@ -7,7 +7,7 @@ const loginEmail = document.getElementById('loginEmail');
 const loginPassword = document.getElementById('loginPassword');
 const authStatus = document.getElementById('authStatus');
 const logoutButton = document.getElementById('logout');
-const currentUser = document.getElementById('currentUser');
+const currentUserLabel = document.getElementById('currentUser');
 
 function showLogin(message = '') {
   appShell.hidden = true;
@@ -30,7 +30,7 @@ async function openApp(user) {
     throw new Error('Ce compte n’est pas autorisé à accéder à cet espace.');
   }
 
-  currentUser.textContent = user.email + ' — ' + data.role;
+  currentUserLabel.textContent = user.email + ' — ' + data.role;
   authScreen.hidden = true;
   appShell.hidden = false;
   authStatus.textContent = '';
