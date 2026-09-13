@@ -1126,9 +1126,9 @@ async function initializeWorkshop() {
 sb.auth.onAuthStateChange(
   (event, session) => {
     if (
-      event === 'SIGNED_IN' &&
-      session?.user
-    ) {
+  (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') &&
+  session?.user
+) {
       startSharedWorkshop(
         session.user
       );
