@@ -1,0 +1,14 @@
+{
+  "name": "collaborative-workshop",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node tests/database.mjs && node tests/browser.mjs",
+    "test:database": "node tests/database.mjs",
+    "test:browser": "node tests/browser.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "playwright": "1.62.1"
+  }
+}

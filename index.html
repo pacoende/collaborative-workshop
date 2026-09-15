@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Collaborative Workshop</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="case-style.css?v=2">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="supabase-client.js" defer></script>
-  <script src="auth.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="cases.js?v=2" defer></script>
+  <script src="session.js?v=2" defer></script>
 </head>
 
 <body>
@@ -63,12 +63,16 @@
       <nav>
         <button id="add">+ Ajouter une case</button>
         <button id="minus" aria-label="Dézoomer">−</button>
+        <span id="zoomValue">100%</span>
         <button id="plus" aria-label="Zoomer">+</button>
         <button id="fit">Recentrer</button>
         <button id="export">Exporter le tableau</button>
         <button id="importButton">Importer un tableau</button>
+        <button id="retry">Réessayer la synchronisation</button>
         <input id="import" type="file" accept=".json" hidden>
       </nav>
+
+      <p id="unreadCount">0 case(s) à consulter</p>
 
       <p id="status" role="status">
         Déplace les cases avec ☰, relie-les avec leur bouton.
@@ -79,46 +83,13 @@
     <main>
 
       <div id="view">
+        <p id="emptyBoard">Ajoute une case pour commencer un sujet.</p>
         <div id="world">
           <svg id="lines" aria-label="Liens entre les cases"></svg>
           <div id="nodes"></div>
         </div>
       </div>
 
-      <aside>
-
-        <section>
-          <h2>Échanges locaux</h2>
-
-          <div id="messages"></div>
-
-          <form id="chat">
-            <input
-              id="message"
-              aria-label="Message"
-              placeholder="Message…"
-              required
-            >
-            <button>Ajouter</button>
-          </form>
-        </section>
-
-        <section>
-          <h2>Documents</h2>
-
-          <label id="drop">
-            Glisser-déposer ou choisir des fichiers
-            <input id="upload" type="file" multiple>
-          </label>
-
-          <div id="files"></div>
-
-          <p>
-            Documents encore conservés localement dans ce navigateur.
-          </p>
-        </section>
-
-      </aside>
 
     </main>
 

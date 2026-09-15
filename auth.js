@@ -87,3 +87,4 @@ window.sbClient.auth.onAuthStateChange(event => {
 });
 
 initializeAuth();
+

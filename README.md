@@ -1,41 +1,81 @@
-# Collaborative Workshop
+# Collaborative Workshop — discussions et documents par case
 
-Version autonome du prototype de la conversation. Aucun compte, serveur ou module à installer pour le site. Tout le code est dans index.html, style.css et app.js.
+Cette mise à jour part du dépôt pacoende/collaborative-workshop, révision 357bd0aaec7232c55cc3ecd55501cb0f0d1d1140.
+Elle conserve le projet Supabase et son WORKSPACE_ID dans supabase-client.js.
 
-## Ouvrir sur l'ordinateur
+## Ce qui change
 
-Décompresser tout le dossier, puis ouvrir index.html dans un navigateur. Garder les trois fichiers ensemble. Pour un stockage local plus fiable, si Python est installé : ouvrir un terminal dans ce dossier, exécuter `python -m http.server 8000 --bind 127.0.0.1`, puis visiter http://localhost:8000. Garder cette même adresse pour retrouver les données. Arrêter le serveur avec Ctrl+C.
+- Chaque case contient ses notes, sa discussion et ses documents, dans des sections dépliables.
+- Les messages affichent un nom d'auteur (nom de profil ou partie de l'email avant @) et leur date.
+- Les fichiers sont partagés dans le bucket privé workshop-files. Limite applicative : 20 Mo par fichier.
+- Une bordure orange et un fond teinté signalent les changements d'un autre membre non consultés.
+- Ouvrir une case ou cliquer « Nouveauté · marquer consultée » enregistre sa lecture pour ce participant.
+- Une modification reçue pendant qu'une case est ouverte la colore à nouveau : elle n'est pas automatiquement considérée comme lue.
+- Les lectures sont conservées dans Supabase, par utilisateur et par case, donc entre appareils et connexions.
+- Les modifications propres à l'utilisateur ne créent pas d'alerte pour lui et n'effacent pas celles des autres.
+- La synchronisation utilise Realtime avec un rafraîchissement de secours toutes les 10 secondes quand la page est visible.
+- Les anciens messages sont regroupés dans une case « Discussion générale » sans changer leurs IDs, auteurs ou dates.
+- Les anciens fichiers IndexedDB sont proposés dans Documents > Anciens fichiers sur cet appareil. « Rattacher ici » envoie une copie dans la case choisie ; la copie locale reste conservée.
 
-## Fonctions
+## Installation
 
-- Cases avec titre et contenu libre (notes, hypothèses, formules écrites, décisions).
-- Ajout, suppression et déplacement dans toutes les directions avec la poignée ☰.
-- Liens multiples : cliquer Relier sur la source puis la destination. Cliquer un trait pour le supprimer.
-- Navigation par glissement du fond, zoom par molette, boutons ou pincement sur le fond.
-- Messages locaux, documents par sélection ou glisser-déposer, téléchargement et suppression des documents.
-- Sauvegarde du tableau et des messages dans localStorage, documents dans IndexedDB.
-- Export/import JSON du tableau et des messages. Les formules sont du texte, pas un moteur de calcul.
+Suivre **INSTALLATION.md** : d'abord la migration SQL dans le projet existant, ensuite les fichiers du site.
+Ne pas déployer index.html seul : il charge cases.js, session.js et case-style.css.
+Les fichiers app.js, auth.js et style.css sont conservés comme ancienne version, mais ne sont plus chargés par index.html.
 
-## Migration vers GitHub Pages
+## Export et import
 
-1. Ouvrir https://github.com/pacoende/collaborative-workshop.
-2. Ajouter les fichiers du dossier à la racine du dépôt via l'envoi de fichiers GitHub. Ne pas envoyer uniquement le ZIP et ne pas imbriquer le dossier : index.html doit être à la racine.
-3. Valider le commit.
-4. Dans les paramètres du dépôt, rubrique Pages, choisir une publication depuis la branche main et le dossier racine, puis enregistrer.
-5. Attendre la publication et utiliser le lien indiqué par GitHub. Adresse attendue : https://pacoende.github.io/collaborative-workshop/ (non activée ni vérifiée à la livraison de ce dossier).
+L'export JSON inclut cases, messages, rattachements et métadonnées des documents. Les fichiers binaires doivent être téléchargés séparément.
+Les brouillons non envoyés sont également exportés (unsaved_drafts / message_drafts) pour récupération manuelle.
+L'import ajoute cases et discussions en une transaction ; il ne remplace ni ne supprime les cases existantes.
+Les messages importés sont attribués à la personne qui importe, à la date de l'import. Le JSON conserve les métadonnées d'origine.
+Les anciens exports (messages sous forme de texte) restent pris en charge et leurs messages vont dans Discussion générale.
+Les documents ne sont jamais copiés ou rattachés automatiquement depuis leurs métadonnées JSON.
 
-## Migration des données
+## Suppression et droits
 
-Ce dossier contient le code du prototype, pas les saisies ou documents conservés dans d'autres aperçus ChatGPT. Ces données ne sont pas accessibles depuis cette session. Dans cette version, exporter le tableau avant de changer d'ordinateur, de navigateur ou d'adresse, puis importer le JSON sur la destination. Télécharger séparément chaque document et le déposer à nouveau sur la destination. Le stockage est lié au navigateur et à l'adresse : les données de localhost ne suivent pas automatiquement le site sur GitHub Pages. Effacer les données du navigateur supprime aussi les sauvegardes locales.
+Supprimer une case supprime sa discussion et ses liens pour tous les participants. Une confirmation est demandée.
+Une case ayant des documents ne peut pas être supprimée : retirer d'abord les fichiers depuis cette case.
+Les membres de l'espace peuvent télécharger et supprimer les fichiers ; les non-membres ne le peuvent pas.
+L'inscription, la liste des membres et leurs rôles sont gérés comme dans le projet existant.
+Une modification concurrente du même champ reste réglée par la dernière écriture sauvegardée. Les champs non modifiés ne sont pas renvoyés ; un déplacement n'écrase pas les notes d'un autre membre.
 
-## Pour travailler réellement à trois
+## Développement et tests
 
-Cette version n'a pas de synchronisation, d'authentification ou de stockage partagé. Chaque participant a ses propres données. GitHub héberge le code et Pages peut servir le site public ; les saisies locales ne sont pas envoyées dans le dépôt. Ajouter un service de données partagé, des comptes et des droits d'accès avant d'utiliser cet outil comme espace collaboratif commun.
+Pas de compilation requise pour le site. Pour le servir localement : `python -m http.server 8000 --bind 127.0.0.1`, puis ouvrir http://localhost:8000.
+La connexion Supabase et la migration sont nécessaires, même en local. Les anciennes données IndexedDB ne suivent pas automatiquement une nouvelle adresse.
 
-## Reprendre dans Codex
+Pour les tests :
+1. `npm install`
+2. `npx playwright install chromium`
+3. `npm test`
 
-Ouvrir ce dossier comme projet et demander : « Voici le prototype à migrer vers pacoende/collaborative-workshop. Inspecte le dépôt avant tout transfert, conserve les changements existants, teste le prototype, transfère ces fichiers puis configure GitHub Pages si les accès le permettent. Ne présente pas la sauvegarde locale comme une synchronisation multiutilisateur. »
+Les dépendances de test ne sont pas nécessaires pour héberger le site. Ne pas téléverser node_modules.
 
-## Vérification
+Tests effectués le 13 septembre 2026 :
+- Migration exécutée deux fois dans un PostgreSQL de test via PGlite, avec un schéma représentatif des tables utilisées par le dépôt.
+- Conservation des messages historiques, auteurs imposés côté serveur et rattachement au bon espace.
+- Notifications propres à chaque utilisateur, propres modifications, lectures anciennes n'effaçant pas une modification plus récente.
+- Accès inter-espaces refusé, fichiers privés, ordre de suppression, import atomique et additif.
+- Navigateur Chromium : discussions et fichiers par case, affichage littéral de texte HTML, brouillons conservés en erreur, indicateurs non lus, échec de métadonnées après envoi et nettoyage, affichages ordinateur et mobile.
 
-Le code JavaScript a été vérifié syntaxiquement lors de la préparation du dossier. Une validation interactive complète dans les navigateurs cibles reste à faire. Aucun transfert GitHub ni hébergement n'a été effectué par la préparation de cette archive.
+Ces tests utilisent une base et une API simulées/locales. La migration n'a PAS été exécutée sur votre Supabase, et le site n'a PAS été publié depuis cette session : le connecteur GitHub a refusé l'écriture (403).
+Le dépôt ne contient pas le schéma SQL d'origine ni ses politiques détaillées : après la migration, vérifier avec deux comptes réels selon INSTALLATION.md.
+
+## Architecture
+
+- index.html : écran de connexion et tableau sans colonne latérale.
+- cases.js : cases, discussions, documents, notifications, navigation et synchronisation.
+- session.js : connexion et démarrage après vérification d'appartenance.
+- case-style.css : présentation du tableau et des cases.
+- supabase-client.js : configuration actuelle conservée.
+- supabase/001_case_collaboration.sql : migration transactionnelle, contrôles d'accès, bucket privé et fonctions RPC.
+- tests/ : essais reproductibles de base de données et de navigateur.
+
+L'activité est comptée par révision sous verrou de la case, et la dernière révision de chaque auteur est conservée. Une lecture acquitte uniquement la révision du cliché réellement affiché, pas une modification arrivée ensuite.
+Le cliché complet provient d'une seule requête SQL, après vérification d'appartenance à l'espace.
+
+Références d'implémentation :
+- [Contrôle d'accès Storage](https://supabase.com/docs/guides/storage/security/access-control)
+- [Fonctions de base de données](https://supabase.com/docs/guides/database/functions)
+- [Postgres Changes et limites de filtrage DELETE](https://supabase.com/docs/guides/realtime/postgres-changes)
